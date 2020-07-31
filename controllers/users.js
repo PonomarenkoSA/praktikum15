@@ -5,6 +5,8 @@ const NotFoundError = require('../errors/notFoundErr');
 const AuthError = require('../errors/authErr');
 const ValidationError = require('../errors/validationErr');
 
+const { NODE_ENV, JWT_SECRET } = process.env;
+
 module.exports.getAllUsers = (req, res, next) => {
   User.find({})
     .then((user) => res.send({ data: user }))
@@ -66,7 +68,7 @@ module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'f20109237f18715dfde3b12696c753568eee175cdb71d317271b0cb8fa0376e8', { expiresIn: '7d' });
+      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
       res
         .cookie('jwtCookie', token, {
           maxAge: 3600000 * 24 * 7,
