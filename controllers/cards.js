@@ -17,10 +17,11 @@ module.exports.createCard = (req, res, next) => {
       .then((card) => res.send({ data: card }))
       .catch((err) => {
         if (err.name === 'ValidationError') {
-          throw new ValidationError('Ошибка валидации');
+          throw new ValidationError(err.message);
         }
         throw new Error();
-      });
+      })
+      .catch(next);
   } catch (err) {
     next(err);
   }

@@ -40,17 +40,22 @@ module.exports.createUser = (req, res, next) => {
           }))
           .catch((err) => {
             if (err.name === 'ValidationError') {
-              throw new ValidationError('Ошибка валидации');
+              throw new ValidationError(err.message);
+            } else {
+              throw new Error();
             }
-            throw new Error();
+          })
+          .catch((err) => {
+            next(err);
           });
       } catch (err) {
         next(err);
       }
     })
     .catch(() => {
-      res.status(400).send({ error: 'Пароль должен быть не менее 8 символов' });
-    });
+      throw new ValidationError('Пароль должен быть не менее 8 символов');
+    })
+    .catch(next);
 };
 
 module.exports.getOneUser = (req, res, next) => {
@@ -74,8 +79,8 @@ module.exports.login = (req, res, next) => {
           maxAge: 3600000 * 24 * 7,
           httpOnly: true,
           sameSite: true,
-        })
-        .end();
+        });
+      res.send({ message: 'Авторизация успешно пройдена' });
     })
     .catch((err) => {
       throw new AuthError(err.message);

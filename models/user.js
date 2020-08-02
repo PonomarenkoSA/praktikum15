@@ -11,12 +11,20 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 2,
     maxlength: 30,
+    validate: {
+      validator: (value) => /[A-Za-zА-Яа-я]/.test(value),
+      message: (props) => `${props.value} Невалидное имя!`,
+    },
   },
   about: {
     type: String,
     required: true,
     minlength: 2,
     maxlength: 30,
+    validate: {
+      validator: (value) => /[A-Za-zА-Яа-я]/.test(value),
+      message: (props) => `${props.value} Невалидное описание!`,
+    },
   },
   avatar: {
     type: String,
